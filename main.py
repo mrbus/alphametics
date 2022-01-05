@@ -19,11 +19,13 @@ Output: 97166+517013=614179
 """
 
 import itertools
+from datetime import datetime
 
 
 def main():
     # Input formula
     formula = input("Input formula: ").upper().replace(" ", "")
+    start_time = datetime.now()
     # Split the formula to left and right sides by the "=" sign
     left_right = formula.split("=")
     check_error(len(left_right) == 2, "Error: formula must contain exactly one '=' sign")
@@ -43,8 +45,7 @@ def main():
     check_error(args[0].isalpha() and args[1].isalpha() and result.isalpha(),
                 "Error: arguments and result must contain letters only")
     # Collect all _different_ letters into a list
-    all_letters = {(c, True) for c in formula if c.isalpha()}
-    all_letters = [k for k, v in all_letters]
+    all_letters = list({c for c in formula if c.isalpha()})
     n_letters = len(all_letters)
     check_error(n_letters <= 10, "Error: formula must contain less than or equal to 10 different letters")
     # Substitute letters with indices in the 'all_letters' array in all the arguments and in the result
@@ -54,23 +55,22 @@ def main():
     arg1n = substitute_with_indices(args[1], all_letters)
     resultn = substitute_with_indices(result, all_letters)
     digits = [d for d in range(10)]
-    # Combinations of n_letters digits
-    for comb in itertools.combinations(digits, n_letters):
-        # Permutations of each combination
-        for perm in itertools.permutations(comb):
-            # Exclude the case with leading zeros
-            if perm[arg0n[0]] == 0 or perm[arg1n[0]] == 0 or perm[resultn[0]] == 0:
-                continue
-            # Check the formula
-            arg0 = get_number(arg0n, perm)
-            arg1 = get_number(arg1n, perm)
-            res  = get_number(resultn, perm)
-            if sign == "+":
-                is_correct = arg0 + arg1 == res
-            else:
-                is_correct = arg0 - arg1 == res
-            if is_correct:
-                print(f"{arg0}{sign}{arg1}={res}")
+    # 'n_letters'-length permutations of digits
+    for perm in itertools.permutations(digits, n_letters):
+        # Exclude the case with leading zeros
+        if perm[arg0n[0]] == 0 or perm[arg1n[0]] == 0 or perm[resultn[0]] == 0:
+            continue
+        # Check the formula
+        arg0 = get_number(arg0n, perm)
+        arg1 = get_number(arg1n, perm)
+        res  = get_number(resultn, perm)
+        if sign == "+":
+            is_correct = arg0 + arg1 == res
+        else:
+            is_correct = arg0 - arg1 == res
+        if is_correct:
+            print(f"{arg0}{sign}{arg1}={res}")
+    print(f"Elapsed time: {datetime.now() - start_time}")
 
 
 def check_error(v, msg):
