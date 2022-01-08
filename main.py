@@ -24,7 +24,7 @@ from datetime import datetime
 
 def main():
     # Input formula
-    formula = input("Input formula: ").upper().replace(" ", "")
+    formula = input("Input the formula: ").upper().replace(" ", "")
     start_time = datetime.now()
     # Split the formula to left and right sides by the "=" sign
     left_right = formula.split("=")
@@ -54,9 +54,8 @@ def main():
     arg0n = substitute_with_indices(args[0], all_letters)
     arg1n = substitute_with_indices(args[1], all_letters)
     resultn = substitute_with_indices(result, all_letters)
-    digits = [d for d in range(10)]
     # 'n_letters'-length permutations of digits
-    for perm in itertools.permutations(digits, n_letters):
+    for perm in itertools.permutations(range(10), n_letters):
         # Exclude the case with leading zeros
         if perm[arg0n[0]] == 0 or perm[arg1n[0]] == 0 or perm[resultn[0]] == 0:
             continue
